@@ -1,0 +1,15 @@
+<div class="col-lg-12">
+  <div class="row centered">
+    <div class="col-md-4">
+
+      <h1>Choose a Worksheet</h1>
+      <div>Worksheet Title: <%= @sheet[:title] %></div>
+      <ul>
+        <% @sheet[:worksheets].each do |link| %>
+            <li><%= link_to "JSON Goodness", worksheet_onboarding_path(link[:key], link[:id]) %></li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</div>
+

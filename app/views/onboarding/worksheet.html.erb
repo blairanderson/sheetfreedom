@@ -1,0 +1,15 @@
+<h1>Your Worksheet</h1>
+<% if !!params[:headers] %>
+    <%= link_to("Without Headers", params.except(:headers)) %>
+<% else %>
+    <%= link_to("With Headers", params.merge(headers: true)) %>
+<% end %>
+<%= button_to "Create API", onboarding_index_path(sheet: params.slice(:id, :worksheet_id, :headers)), method: :post %>
+<hr>
+<% if !@worksheet.blank? %>
+    <pre><%= JSON.pretty_generate(@worksheet) %></pre>
+<% end %>
+
+<script !src="">
+  alert("refreshed")
+</script>

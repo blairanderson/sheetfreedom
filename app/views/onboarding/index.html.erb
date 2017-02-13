@@ -1,0 +1,16 @@
+<div class="col-lg-12">
+  <div class="row centered">
+    <div class="col-md-4">
+      <h1>Make a ZenSheet!</h1>
+      <ul>
+        <% @google.each do |sheet| %>
+            <li>
+              <div>Author: <%= sheet[:author] %></div>
+              <div>Sheet Title: <%= sheet[:title] %></div>
+              <div><%= link_to 'Get your Worksheets', onboarding_path({id: sheet[:id]}) %></div>
+            </li>
+        <% end %>
+      </ul>
+    </div>
+  </div>
+</div>

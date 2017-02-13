@@ -1,0 +1,5 @@
+<% @sheets.each do |sheet| %>
+    <% sheet.api_keys.each do |key| %>
+        <%= link_to sheet_path(sheet, token: key.id, format: :json), sheet_path(sheet, token: key.id, format: :json) %>
+    <% end %>
+<% end %>
