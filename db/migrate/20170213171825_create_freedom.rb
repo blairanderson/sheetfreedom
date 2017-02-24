@@ -30,6 +30,7 @@ class CreateFreedom < ActiveRecord::Migration
       t.timestamps null: false
     end
 
+    # these are used for google access
     create_table :tokens do |t|
       t.integer :user_id, null: false
       t.string :access_token, null: false
@@ -39,6 +40,8 @@ class CreateFreedom < ActiveRecord::Migration
       t.timestamps null: false
     end
 
+    # these store the worksheet data, as a cache.
+    # we encrypt the data
     create_table :worksheet_rows do |t|
       t.uuid :sheet_id, null: false
       t.integer :row, null: false

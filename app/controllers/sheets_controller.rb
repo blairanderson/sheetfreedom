@@ -17,14 +17,17 @@ class SheetsController < ApplicationController
     rows = @sheet.worksheet_rows.order('row ASC').paginate(page: params[:page], per_page: 100)
 
     args = {only: [:title, :use_count]}
+
     if @sheet.use_headers
       args[:only] ||= []
       args[:only] << :headers
     end
 
+    @json_response = @sheet.as_json(args).merge({rows: rows.pluck(:data)})
+
     respond_to do |format|
       format.html
-      format.json { render json: @sheet.as_json(args).merge(rows: rows.pluck(:data), meta: pagination_dict(rows)) }
+      format.json { render json: @json_response, meta: pagination_dict(rows) }
     end
   end
 
