@@ -220,5 +220,8 @@ DEPENDENCIES
   uglifier
   will_paginate (~> 3.1.0)
 
+RUBY VERSION
+   ruby 2.1.7p400
+
 BUNDLED WITH
-   1.13.6
+   1.14.5
