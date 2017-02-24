@@ -1,16 +1,18 @@
 <%= button_to "Generate ApiKey", sheet_api_keys_path(@sheet) %>
-<ul>
-  <% @sheet.api_keys.each do |key| %>
-      <li>
-        (<%= key.use_count %>)
-        <% if Rails.env.production? %>
-            <%= link_to sheet_url(@sheet, token: key.id, format: :json), sheet_url(@sheet, token: key.id, format: :json) %>
-        <% else %>
-            <%= link_to sheet_path(@sheet, token: key.id, format: :json), sheet_path(@sheet, token: key.id, format: :json) %>
-        <% end %>
-      </li>
-  <% end %>
-</ul>
-
+<% if @sheet.api_keys.length > 0 %>
+    <label>Right-Click and open link in an incognito browser</label>
+    <ul>
+      <% @sheet.api_keys.each do |key| %>
+          <li>
+            (<%= key.use_count %>)
+            <% if Rails.env.production? %>
+                <%= link_to sheet_url(@sheet, token: key.id, format: :json), sheet_url(@sheet, token: key.id, format: :json) %>
+            <% else %>
+                <%= link_to sheet_path(@sheet, token: key.id, format: :json), sheet_path(@sheet, token: key.id, format: :json) %>
+            <% end %>
+          </li>
+      <% end %>
+    </ul>
+<% end %>
 
 <pre><%= JSON.pretty_generate(@json_response) %></pre>
