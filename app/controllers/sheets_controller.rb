@@ -33,9 +33,7 @@ class SheetsController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.json do
-        render json: @json_response, meta: pagination_dict(rows)
-      end
+      format.json { render json: @json_response.merge(meta: pagination_dict(rows)) }
     end
   end
 
