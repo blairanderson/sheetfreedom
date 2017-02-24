@@ -6,12 +6,18 @@ class SheetsController < ApplicationController
   end
 
   def show
+    @key = nil
+    @sheet = nil
     if current_user
       @sheet = current_user.sheets.find(params[:id])
-    elsif params[:token]
-      key = ApiKey.where(sheet_id: params[:id], id: params[:token]).first!
-      @sheet = key.sheet
-      key.increment!(:use_count)
+    elsif params[:token].present?
+      @key = ApiKey.includes(:sheet).where(sheet_id: params[:id], id: params[:token]).first!
+      @sheet = @key.sheet
+      @key.increment!(:use_count)
+    end
+
+    if @sheet.blank?
+      render(json: {error: "not found"}, code: 404) and return
     end
 
     rows = @sheet.worksheet_rows.order('row ASC').paginate(page: params[:page], per_page: 100)
@@ -27,7 +33,9 @@ class SheetsController < ApplicationController
 
     respond_to do |format|
       format.html
-      format.json { render json: @json_response, meta: pagination_dict(rows) }
+      format.json do
+        render json: @json_response, meta: pagination_dict(rows)
+      end
     end
   end
 
