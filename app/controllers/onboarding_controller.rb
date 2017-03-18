@@ -2,12 +2,18 @@ class OnboardingController < ApplicationController
   before_filter :require_login
 
   def index
-    @google = current_user.google_sheets.map do |sheet|
+    @google = current_user.google_sheets.map.with_index do |sheet, index|
+      if index == 0
+        # binding.pry
+      end
       {
+
           id: sheet.dig('id', '$t').split('private/full/').last,
           # updated: Time.at(sheet["updated"]["$t"]),
-          author: sheet.dig('author', 0, 'name', '$t'),
-          title: sheet.dig('title', '$t')
+          author_name: sheet.dig('author', 0, 'name', '$t'),
+          author_email: sheet.dig('author', 0, 'email', '$t'),
+          title: sheet.dig('title', '$t'),
+          updated_at: Time.parse(sheet.dig('updated', '$t'))
       }
     end
   end
@@ -34,11 +40,11 @@ class OnboardingController < ApplicationController
     end
 
     # store these for specs
-    if Rails.env.development?
-      File.open(File.join(Rails.root, "spec/#{[params[:id], params[:worksheet_id]].join("-")}.json"), "w") do |f|
-        f.write(JSON.pretty_generate(raw_sheet))
-      end
-    end
+    # if Rails.env.development?
+    #   File.open(File.join(Rails.root, "spec/#{[params[:id], params[:worksheet_id]].join("-")}.json"), "w") do |f|
+    #     f.write(JSON.pretty_generate(raw_sheet))
+    #   end
+    # end
 
     @title = raw_sheet.dig("feed", "title", "$t")
     @worksheet = current_user.convert(raw_sheet, !!params[:headers])

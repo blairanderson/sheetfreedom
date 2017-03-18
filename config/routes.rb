@@ -1,6 +1,11 @@
 Rails.application.routes.draw do
   resources :sheets do
     resources :api_keys, only: [:create]
+    resources :visuals do
+      collection do
+        get :data
+      end
+    end
   end
 
   resources :onboarding do

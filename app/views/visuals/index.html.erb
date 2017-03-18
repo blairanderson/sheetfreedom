@@ -1,0 +1,11 @@
+<label for="">Choose the date column</label>
+<ul>
+  <% @column_types.each_with_index do |(type, example), index| %>
+      <li><%= link_to_if(type.in?(["Time", "Date"]),"#{type}: #{truncate(example, length: 20)}", params.merge(date: index)) %></li>
+  <% end %>
+</ul>
+
+<% if params[:date] %>
+    <%= line_chart(data_sheet_visuals_path(@sheet, date: params[:date])) %>
+<% end %>
+

@@ -2,7 +2,12 @@ class SessionsController < ApplicationController
 
   def new
     if logged_in?
-      redirect_to onboarding_index_path
+      if current_user.sheets.count > 0
+        redirect_to sheets_path
+      else
+        redirect_to onboarding_index_path
+      end
+
     end
   end
 
