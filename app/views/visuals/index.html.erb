@@ -1,11 +1,28 @@
 <label for="">Choose the date column</label>
 <ul>
   <% @column_types.each_with_index do |(type, example), index| %>
-      <li><%= link_to_if(type.in?(["Time", "Date"]),"#{type}: #{truncate(example, length: 20)}", params.merge(date: index)) %></li>
+      <% type_is_date_time = type.in?(["Time", "Date"]) %>
+      <% is_groupable = index == 0 || !!type_is_date_time %>
+      <li>
+        <% if type_is_date_time %>
+            <%= link_to("#{type}: #{truncate(example, length: 50)}", params.merge(date_index: index)) %>
+            <%= select_tag(:date_group, options_for_select(date_groups, params[:date_group])) %>
+        <% elsif is_groupable %>
+            <%= link_to("#{type}: #{truncate(example, length: 50)}", params.merge(group: index)) %>
+        <% else %>
+            <%= "#{type}: #{truncate(example, length: 50)}" %>
+        <% end %>
+      </li>
+
   <% end %>
 </ul>
 
-<% if params[:date] %>
-    <%= line_chart(data_sheet_visuals_path(@sheet, date: params[:date])) %>
+<% if params[:date_index] %>
+    <%= line_chart(data_sheet_visuals_path(@sheet, date_index: params[:date_index], date_group: params[:date_group])) %>
 <% end %>
 
+<script !src="">
+  $(document.body).on("change", "#date_group", function(e){
+    window.location.search = "date_group=" + this.value
+  });
+</script>

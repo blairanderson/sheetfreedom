@@ -19,19 +19,34 @@ class VisualsController < ApplicationController
       [data_type.to_s, column_data]
     end
 
-    if params[:date].blank? && first = @column_types.index {|type,_| type.in?(["Time", "Date"]) }
+    if params[:date_index].blank? && first = @column_types.index { |type, _| type.in?(["Time", "Date"]) }
       flash[:notice] = "Did we find the correct date column?"
-      redirect_to url_for(params.merge(date: first))
+      redirect_to url_for(params.merge(date_index: first))
     end
   end
+
+  def date_groups
+    ["year", "month", "date"]
+  end
+
+  helper_method :date_groups
 
   def show
 
   end
 
+  def date_group_to_strftime
+    @date_group_to_strftime ||= Hash.new("%B %Y").merge({
+                                                            "year" => "%Y",
+                                                            "month" => "%B %Y",
+                                                            "date" => "%D"
+                                                        })[params[:date_group]]
+
+  end
+
   def data
-    date_index = if params[:date] && params[:date].to_i
-                   params[:date].to_i
+    date_index = if params[:date_index] && params[:date_index].to_i
+                   params[:date_index].to_i
                  else
                    nil
                  end
@@ -39,11 +54,10 @@ class VisualsController < ApplicationController
     raw_data = @sheet.worksheet_rows.order("row ASC").pluck(:data)
 
     json_data = if date_index
-                  date_group = "%B %Y" #month year
                   raw_data.group_by do |data|
-                    Time.parse(data[date_index]).strftime(date_group)
+                    Time.parse(data[date_index]).strftime(date_group_to_strftime)
                   end.inject({}) do |memo, (group_name, data)|
-                    memo[group_name] = data.count{|_,i| i }
+                    memo[group_name] = data.count { |_, i| i }
                     memo
                   end
                 end
