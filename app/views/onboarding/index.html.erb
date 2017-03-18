@@ -2,15 +2,24 @@
   <div class="row centered">
     <div class="col-md-4">
       <h1>Make a ZenSheet!</h1>
-      <ul>
+      <table>
+        <thead>
+          <tr>
+            <th>updated</th>
+            <th>link</th>
+            <th>author</th>
+          </tr>
+        </thead>
+        <tbody>
         <% @google.each do |sheet| %>
-            <li>
-              <div>Author: <%= sheet[:author] %></div>
-              <div>Sheet Title: <%= sheet[:title] %></div>
-              <div><%= link_to 'Get your Worksheets', onboarding_path({id: sheet[:id]}) %></div>
-            </li>
+            <tr>
+              <td><%= sheet[:updated_at].to_s(:long_ordinal) %></td>
+              <td><%= link_to sheet[:title], onboarding_path({id: sheet[:id]}) %></td>
+              <td><%= sheet[:author_email] %>(<%= sheet[:author_name] %>)</td>
+            </tr>
         <% end %>
-      </ul>
+        </tbody>
+      </table>
     </div>
   </div>
 </div>

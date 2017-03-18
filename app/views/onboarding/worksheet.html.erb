@@ -1,9 +1,10 @@
-<h1>Your Worksheet</h1>
+<h1>Onboarding Worksheet</h1>
 <% if !!params[:headers] %>
     <%= link_to("Without Headers", params.except(:headers)) %>
 <% else %>
-    <%= link_to("With Headers", params.merge(headers: true)) %>
+    <%= link_to("This sheet has Headers", params.merge(headers: true)) %>
 <% end %>
+
 <%= button_to "Create API", onboarding_index_path(sheet: params.slice(:id, :worksheet_id, :headers)), method: :post %>
 <hr>
 <% if !@worksheet.blank? %>

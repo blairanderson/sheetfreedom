@@ -1,5 +1,41 @@
-<% @sheets.each do |sheet| %>
-    <% sheet.api_keys.each do |key| %>
-        <%= link_to sheet_path(sheet, token: key.id, format: :json), sheet_path(sheet, token: key.id, format: :json) %>
-    <% end %>
-<% end %>
+<h2>Your Sheets</h2>
+
+<%= link_to("import another sheet", onboarding_index_path) %>
+
+<ol>
+  <% @sheets.each do |sheet| %>
+      <li>
+        <dl>
+          <dt>Title</dt>
+          <dd>
+            <%= link_to(sheet.title, sheet_path(sheet)) %>
+            <%= link_to "Visualize This Sheet", sheet_visuals_path(sheet) %>
+          </dd>
+
+          <dt>Created</dt>
+          <dd><%= time_ago_in_words(sheet.created_at) %></dd>
+
+          <dt>WorkSheet Rows</dt>
+          <dd><%= sheet.worksheet_rows_count %></dd>
+
+          <dt>External Link to Google</dt>
+          <% link = "https://docs.google.com/spreadsheets/d/#{sheet.google_file_id}/edit#gid=#{sheet.google_worksheet_id}" %>
+          <dd><%= link_to(link, link, target: "_blank") %></dd>
+
+          <dt>Api Keys</dt>
+          <dd>
+            <ul>
+              <% sheet.api_keys.each do |key| %>
+                  <li>
+                    (<%= key.use_count %>)
+                    <%= text_field_tag(nil, key.id) %>
+                    <% path_tester = sheet_path(sheet, token: key.id, format: :json) %>
+                    <%= link_to "test", path_tester, title: path_tester  %>
+                  </li>
+              <% end %>
+            </ul>
+          </dd>
+        </dl>
+      </li>
+  <% end %>
+</ol>
