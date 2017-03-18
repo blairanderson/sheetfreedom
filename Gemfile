@@ -14,6 +14,7 @@ gem 'sass-rails'
 gem 'jquery-rails'
 gem 'uglifier'
 gem 'coffee-rails'
+gem 'chartkick'
 
 gem 'rails_12factor', group: :production
 
