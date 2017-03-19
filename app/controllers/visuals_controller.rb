@@ -21,12 +21,21 @@ class VisualsController < ApplicationController
 
     if params[:date_index].blank? && first = @column_types.index { |type, _| type.in?(["Time", "Date"]) }
       flash[:notice] = "Did we find the correct date column?"
-      redirect_to url_for(params.merge(date_index: first))
+      redirect_to url_for(params.merge(date_index: first, date_group: params[:date_group] || "month"))
     end
   end
 
   def date_groups
-    ["year", "month", "date"]
+    %w(
+    year
+    quarter
+    month
+    month_of_year
+    day_of_month
+    week
+    day_of_week
+    day
+    hour_of_day)
   end
 
   helper_method :date_groups
@@ -36,12 +45,11 @@ class VisualsController < ApplicationController
   end
 
   def date_group_to_strftime
-    @date_group_to_strftime ||= Hash.new("%B %Y").merge({
-                                                            "year" => "%Y",
-                                                            "month" => "%B %Y",
-                                                            "date" => "%D"
-                                                        })[params[:date_group]]
-
+    @date_group_to_strftime ||= if params[:date_group].in?(date_groups)
+                                  "group_by_#{params[:date_group]}".to_sym
+                                else
+                                  :group_by_month
+                                end
   end
 
   def data
@@ -53,39 +61,25 @@ class VisualsController < ApplicationController
 
     raw_data = @sheet.worksheet_rows.order("row ASC").pluck(:data)
 
-    json_data = if date_index
-                  raw_data.group_by do |data|
-                    Time.parse(data[date_index]).strftime(date_group_to_strftime)
-                  end.inject({}) do |memo, (group_name, data)|
-                    memo[group_name] = data.count { |_, i| i }
-                    memo
-                  end
+    grouped_data = if params[:groupable] && groupable_index =  params[:groupable].to_i
+                  raw_data.group_by{|a| a[groupable_index]}
+                else
+                  {"All" => raw_data}
                 end
 
-    # grouped_data = grouped_data.map do |group, data|
-    #   {
-    #       name: group,
-    #       data: data.group_by { |data| Time.parse(data[1]).strftime("%B %Y") }.map { |date, data|}
-    #   }
-    # end
-    #
-    # binding.pry
-    #
-    # json_data = grouped_data.map do |title, title_group|
-    #
-    #   this_group_data = {}
-    #   title_group.group_by do |data|
-    #   end.each do |group, data|
-    #     this_group_data[group] = data.count { |_, b| b }
-    #   end
-    #
-    #   {
-    #       name: title,
-    #       data: this_group_data
-    #   }
-    # end
+    json_data = grouped_data.map do |name, g_data|
+      g_json = g_data.send(date_group_to_strftime) { |data| Time.parse(data[date_index]) }
+                    .inject({}) do |memo, (group_name, data)|
+        memo[group_name] = data.count { |_, i| i }
+        memo
+      end
+      {
+          name: name,
+          data: g_json
+      }
+    end
 
-    render json: json_data
+    render json: json_data, root: false
   end
 
   private

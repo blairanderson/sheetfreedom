@@ -15,6 +15,8 @@ gem 'jquery-rails'
 gem 'uglifier'
 gem 'coffee-rails'
 gem 'chartkick'
+gem 'groupdate'
+gem 'hightop'
 
 gem 'rails_12factor', group: :production
 

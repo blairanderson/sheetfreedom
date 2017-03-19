@@ -8,17 +8,16 @@
             <%= link_to("#{type}: #{truncate(example, length: 50)}", params.merge(date_index: index)) %>
             <%= select_tag(:date_group, options_for_select(date_groups, params[:date_group])) %>
         <% elsif is_groupable %>
-            <%= link_to("#{type}: #{truncate(example, length: 50)}", params.merge(group: index)) %>
+            <%= link_to("#{type}: #{truncate(example, length: 50)}", params.merge(groupable: index)) %>
         <% else %>
             <%= "#{type}: #{truncate(example, length: 50)}" %>
         <% end %>
       </li>
-
   <% end %>
 </ul>
 
 <% if params[:date_index] %>
-    <%= line_chart(data_sheet_visuals_path(@sheet, date_index: params[:date_index], date_group: params[:date_group])) %>
+    <%= line_chart(data_sheet_visuals_path(@sheet, params)) %>
 <% end %>
 
 <script !src="">

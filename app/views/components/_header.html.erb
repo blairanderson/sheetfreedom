@@ -1,5 +1,7 @@
 <% if logged_in? %>
     <ul class="nav navbar-nav navbar-right">
-      <li><%= link_to 'Logout', logout_path %></li>
+      <li><%= link_to 'Logout', logout_path, data: {confirm: "are you sure?"} %></li>
+      <li><%= link_to 'Sheets', sheets_path %></li>
+      <li><%= link_to 'Google Sheets', onboarding_index_path %></li>
     </ul>
 <% end %>
