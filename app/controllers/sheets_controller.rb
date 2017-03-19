@@ -8,11 +8,19 @@ class SheetsController < ApplicationController
   def show
     @key = nil
     @sheet = nil
+
+
     if current_user
+
+      # if someone is logged in, go ahead and show
       @sheet = current_user.sheets.find(params[:id])
     elsif params[:token].present?
+
+      # if a token is provided, use it
       @key = ApiKey.includes(:sheet).where(sheet_id: params[:id], id: params[:token]).first!
       @sheet = @key.sheet
+
+      # keep track of the token use_count
       @key.increment!(:use_count)
     end
 
@@ -29,11 +37,11 @@ class SheetsController < ApplicationController
       args[:only] << :headers
     end
 
-    @json_response = @sheet.as_json(args).merge({rows: rows.pluck(:data)})
+    @json_response = @sheet.as_json(args).merge({rows: rows.pluck(:data), meta: pagination_dict(rows)})
 
     respond_to do |format|
       format.html
-      format.json { render json: @json_response.merge(meta: pagination_dict(rows)) }
+      format.json { render json: @json_response }
     end
   end
 
