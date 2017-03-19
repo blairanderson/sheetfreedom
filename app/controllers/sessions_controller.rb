@@ -26,6 +26,7 @@ class SessionsController < ApplicationController
     redirect_to root_path, notice: 'logged out'
   end
 
+  # TODO: use Devise
   def login_user(user)
     session[:user_id] = user.id
   end
